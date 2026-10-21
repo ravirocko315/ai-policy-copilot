@@ -13,7 +13,7 @@ class Document:
 def load_documents(data_dir: Path) -> List[Document]:
     docs = []
     for path in Path(data_dir).glob("*.txt"):
-        text = path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8-sig")
         docs.append(Document(
             doc_id=str(uuid.uuid4())[:8],
             title=path.stem,

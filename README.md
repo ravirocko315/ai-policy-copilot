@@ -1,6 +1,6 @@
 ﻿# AI Policy Copilot
 
-An educational Python RAG prototype that answers questions from policy documents using semantic search, keyword search, reranking, and citations. The repository currently includes a sample HR leave policy and is designed to support additional Insurance and Enterprise Security documents.
+An educational Python RAG prototype that answers questions from policy documents using semantic search, keyword search, reranking, and citations. The repository includes sample policy documents across three domains: HR (leave policy), Insurance (claims policy), and Enterprise Security (information security policy).
 
 Ask a question such as *"How many sick days do I get?"* The system retrieves relevant policy passages and attaches source citations. When an LLM is configured, it can draft an answer such as: `Employees are entitled to 12 days of paid sick leave per year. [1]` In offline mode, it shows the retrieved excerpts instead.
 
@@ -33,7 +33,8 @@ User Question
      v
 [2] Reranking --> a cross-encoder model re-scores the merged
      candidates by reading the question and each passage together,
-     producing a more accurate ranking than retrieval alone
+     producing a more accurate ranking than retrieval alone, and
+     filters out candidates below a minimum relevance score
      |
      v
 [3] Citation Builder --> attaches a numbered source reference
@@ -60,7 +61,7 @@ Embeddings are great at matching meaning ("time off" ~ "leave") but can miss exa
 
 ### Why rerank after retrieval?
 
-Initial retrieval (dense + sparse) is optimized for speed across large document sets, so it can return a noisy list of "roughly relevant" passages. The reranker is slower but far more accurate - it reads the question and each candidate passage together, rather than comparing pre-computed vectors. It's used only on the small shortlist, not the whole document set, to keep this fast.
+Initial retrieval (dense + sparse) is optimized for speed across large document sets, so it can return a noisy list of "roughly relevant" passages. The reranker is slower but far more accurate - it reads the question and each candidate passage together, rather than comparing pre-computed vectors. It's used only on the small shortlist, not the whole document set, to keep this fast. It also filters out passages that score below a relevance threshold, rather than always returning a fixed number of results (see Challenge #4 below).
 
 ## Project Structure
 
@@ -69,7 +70,7 @@ ai-policy-copilot/
 ├── config.py                  # Central settings (chunk sizes, model names, top-k values)
 ├── requirements.txt           # Python dependencies
 ├── data/
-│   ├── sample_policies/       # Source policy documents (.txt)
+│   ├── sample_policies/       # Source policy documents (.txt) - HR, Insurance, Security
 │   └── eval/                  # Evaluation question/answer pairs
 ├── scripts/
 │   └── run_eval.py            # Runs the full pipeline against the eval set
@@ -117,13 +118,23 @@ Without this step, the system still works fully - it will display the top retrie
 
 ## Running the Evaluation
 
-The included evaluation harness runs the full pipeline (chunking -> embedding -> hybrid search -> reranking -> citation -> generation) against a small set of test questions and scores the results:
+The included evaluation harness runs the full pipeline (chunking -> embedding -> hybrid search -> reranking -> citation -> generation) against a set of test questions spanning all three policy domains and scores the results:
 
 ~~~bash
 python scripts/run_eval.py
 ~~~
 
 Expected output includes a per-question breakdown and aggregate scores across five metrics: context precision, context recall, faithfulness, answer relevancy, and citation validity.
+
+**Current aggregate scores (8 questions across 3 documents):**
+
+~~~text
+context_precision   : 0.958
+context_recall       : 1.0
+faithfulness          : 0.885
+answer_relevancy      : 0.819
+citation_validity     : 1.0
+~~~
 
 ## Example
 
@@ -162,14 +173,20 @@ Even after fixing the threshold, a deliberately fabricated answer ("You are enti
 
   Fix: added a separate rule-based `numeric_consistency()` check that extracts all numbers from the answer and the retrieved context, and verifies the answer numbers are a subset of the context numbers. The final faithfulness score is now an average of the semantic score and this numeric check, which correctly dropped the hallucinated answer score from 1.0 to 0.5 while leaving accurate answers unaffected.
 
+**4. Fixed top-k retrieval padded results with irrelevant chunks.**
+After expanding the corpus from one document to three (HR, Insurance, Enterprise Security), context_precision unexpectedly dropped from 0.55 to 0.4 despite retrieval accuracy actually being correct. A diagnostic script printing reranker scores per chunk revealed the real cause: the reranker correctly identified exactly one relevant chunk per question (scoring strongly positive, e.g. +4 to +7), while the remaining 4 chunks returned to satisfy a fixed top_k=5 were clearly irrelevant (scoring strongly negative, e.g. -6 to -10). The system was being forced to pad results with filler just to hit a fixed count. Fixed by adding a `min_score` cutoff to the reranker, so it returns only chunks above a relevance threshold (falling back to the single best match if none qualify) instead of always returning exactly k results. This raised context_precision to 0.958.
+
+**5. Boilerplate formatting corrupted the faithfulness metric.**
+After the above fix reduced each answer to a single cited excerpt, faithfulness unexpectedly dropped (0.721 to 0.572), with the worst scores on the simplest, most accurate answers. A debug script printing the sentence-splitter's output revealed the cause: citation headers like `[1] (Document: hr_leave_policy | Section: 5. Contact)` contain periods that the sentence-splitter misinterpreted as sentence boundaries, chopping headers into meaningless fragments that could never semantically match real context. Fixed by adding a `strip_boilerplate()` step that removes offline-mode notices and citation headers before scoring faithfulness, while leaving the user-facing answer untouched. This raised faithfulness to 0.885 - higher than the original single-document baseline (0.842), despite the corpus being three times larger and spanning three distinct domains.
+
 ## Status / Roadmap
 
-This is a working prototype covering all six core RAG concepts end-to-end (chunking, embeddings, hybrid search, reranking, citations, evaluation). Planned next steps:
+This is a working prototype covering all six core RAG concepts end-to-end (chunking, embeddings, hybrid search, reranking, citations, evaluation), with sample documents across HR, Insurance, and Enterprise Security domains and an 8-question evaluation set spanning all three. Planned next steps:
 
-- Add sample policy documents for Insurance and Enterprise Security domains (currently HR only)
 - Build a Streamlit UI for interactive question-answering
-- Expand the evaluation set beyond the current 4 questions
+- Expand the evaluation set further
 - Optional: FastAPI endpoint for programmatic access
+- Optional: connect a real LLM via OpenAI API key for generated (not just extractive) answers
 
 ## License
 

@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "question": "How many days of paid annual leave am I entitled to per year?",
     "ground_truth": "Employees are entitled to 21 working days of paid annual leave per year, accrued at 1.75 days per month."
@@ -14,5 +14,21 @@
   {
     "question": "How do I contact HR about this policy?",
     "ground_truth": "Contact the HR Help Desk at hr-helpdesk@company.com."
+  },
+  {
+    "question": "What is the annual maximum coverage under the health insurance plan?",
+    "ground_truth": "The annual maximum coverage per insured employee is $50,000."
+  },
+  {
+    "question": "How long do I have to submit an insurance claim after treatment?",
+    "ground_truth": "Claims must be submitted within 60 days of the date of treatment."
+  },
+  {
+    "question": "How often must I change my password?",
+    "ground_truth": "Passwords must be changed every 90 days and cannot repeat the last 5 previously used passwords."
+  },
+  {
+    "question": "How quickly must a suspected security incident be reported?",
+    "ground_truth": "Any suspected security incident must be reported to the Security Operations Center within 1 hour of discovery."
   }
 ]

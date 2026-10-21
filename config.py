@@ -1,4 +1,4 @@
-import os
+﻿import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -21,6 +21,7 @@ class Settings:
     final_top_k: int = 5
 
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    rerank_min_score: float = 0.0
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
 
 settings = Settings()

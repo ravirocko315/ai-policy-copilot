@@ -1,0 +1,29 @@
+﻿Group Health Insurance Claims Policy
+
+1. Overview
+This document describes the claims process, coverage limits, and exclusions under the company-sponsored Group Health Insurance Plan administered by SecureLife Insurance.
+
+2. Coverage Limits
+2.1 The annual maximum coverage per insured employee is $50,000.
+2.2 In-patient hospitalization is covered up to 100% of eligible expenses, subject to the annual maximum.
+2.3 Outpatient consultations are reimbursed at 80%, up to $2,000 per year.
+2.4 Dental treatment is covered up to $1,000 per year, excluding cosmetic procedures.
+2.5 Maternity benefits are capped at $5,000 per pregnancy and require 10 months of continuous enrollment prior to claim eligibility.
+
+3. Claim Submission Process
+3.1 Claims must be submitted within 60 days of the date of treatment using the online claims portal or the physical claim form.
+3.2 Required documents include the original invoice, a detailed medical report, and the claim form signed by the treating physician.
+3.3 Claims are typically processed within 15 business days of complete documentation being received.
+3.4 Cashless claims at network hospitals require a pre-authorization form submitted at least 48 hours before planned admission (24 hours for emergencies).
+
+4. Exclusions
+4.1 Pre-existing conditions are not covered during the first 12 months of enrollment.
+4.2 Cosmetic surgery, fertility treatments, and self-inflicted injuries are excluded from coverage.
+4.3 Treatment received outside the approved network without prior authorization may be reimbursed at a reduced rate of 50%.
+
+5. Claim Appeals
+5.1 Employees may appeal a rejected claim within 30 days of the rejection notice by submitting an appeal form to the Insurance Grievance Committee.
+5.2 Appeals are reviewed and a decision is communicated within 20 business days.
+
+6. Contact
+For claims assistance, contact the Insurance Desk at claims@securelife-support.com or call 1-800-555-0199.

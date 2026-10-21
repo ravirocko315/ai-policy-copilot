@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+﻿from dataclasses import dataclass
 from typing import List, Tuple
 
 from src.ingestion.chunker import Chunk
@@ -17,11 +17,6 @@ class RAGResponse:
 
 
 class ExtractiveFallbackLLM:
-    """
-    No OpenAI API key configured -> instead of calling an LLM, just
-    show the top excerpts directly. This lets the WHOLE pipeline run
-    and be tested for free, with no API costs.
-    """
     def generate(self, messages: list) -> str:
         user_msg = messages[-1]["content"]
         context_block = user_msg.split("Context (numbered policy excerpts):")[1].split("Question:")[0]
@@ -33,7 +28,6 @@ class ExtractiveFallbackLLM:
 
 
 class OpenAILLM:
-    """Real LLM call -- only used if an OPENAI_API_KEY is set in config."""
     def __init__(self):
         from openai import OpenAI
         self.client = OpenAI(api_key=settings.openai_api_key)
@@ -61,18 +55,15 @@ class PolicyCopilot:
         self.llm = get_llm()
 
     def answer(self, question: str) -> RAGResponse:
-        # 1. Hybrid search -> broad candidate list
         candidates = self.hybrid_searcher.search(question, top_k=settings.hybrid_top_k)
-
-        # 2. Reranking -> precise top-k
-        final_chunks = self.reranker.rerank(question, candidates, top_k=settings.final_top_k)
-
-        # 3. Build numbered context + citations
+        final_chunks = self.reranker.rerank(
+            question,
+            candidates,
+            top_k=settings.final_top_k,
+            min_score=settings.rerank_min_score,
+        )
         context = format_context_for_prompt(final_chunks)
         citations = build_citations(final_chunks)
-
-        # 4. Generate the answer
         messages = build_messages(question, context)
         answer_text = self.llm.generate(messages)
-
         return RAGResponse(question=question, answer=answer_text, citations=citations)

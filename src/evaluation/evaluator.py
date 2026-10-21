@@ -13,7 +13,7 @@ from src.evaluation.metrics import (
 
 
 def load_eval_set(path: Path) -> List[Dict]:
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         return json.load(f)
 
 

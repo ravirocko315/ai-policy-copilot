@@ -16,6 +16,18 @@ def split_sentences(text: str) -> List[str]:
 def extract_numbers(text: str) -> set:
     return set(re.findall(r"\d+(?:\.\d+)?", text))
 
+def strip_boilerplate(text: str) -> str:
+    lines = text.split("\n")
+    cleaned_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("(Offline mode"):
+            continue
+        if re.match(r"^\[\d+\]\s*\(Document:.*?\)$", stripped):
+            continue
+        cleaned_lines.append(line)
+    return "\n".join(cleaned_lines).strip()
+
 
 def numeric_consistency(answer: str, retrieved_texts: List[str]) -> float:
     answer_numbers = extract_numbers(answer)
@@ -58,7 +70,8 @@ def context_recall(retrieved_texts: List[str], ground_truth: str, threshold: flo
 
 
 def faithfulness(answer: str, retrieved_texts: List[str], threshold: float = 0.65) -> float:
-    answer_sentences = split_sentences(answer)
+    cleaned_answer = strip_boilerplate(answer)
+    answer_sentences = split_sentences(cleaned_answer)
     if not answer_sentences:
         return 0.0
 
@@ -74,7 +87,7 @@ def faithfulness(answer: str, retrieved_texts: List[str], threshold: float = 0.6
             supported += 1
     semantic_score = supported / len(answer_sentences)
 
-    numeric_score = numeric_consistency(answer, retrieved_texts)
+    numeric_score = numeric_consistency(cleaned_answer, retrieved_texts)
 
     return round((semantic_score + numeric_score) / 2, 3)
 

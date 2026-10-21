@@ -1,0 +1,34 @@
+﻿Enterprise Information Security Policy
+
+1. Purpose and Scope
+This policy establishes the minimum information security requirements for all employees, contractors, and third parties accessing company systems and data.
+
+2. Access Control
+2.1 All employees must use multi-factor authentication (MFA) to access corporate systems, including email, VPN, and cloud applications.
+2.2 User access rights must follow the principle of least privilege and be reviewed quarterly by system owners.
+2.3 Access credentials must not be shared between individuals under any circumstances.
+
+3. Password Policy
+3.1 Passwords must be at least 12 characters long and include a mix of uppercase, lowercase, numbers, and special characters.
+3.2 Passwords must be changed every 90 days and cannot repeat the last 5 previously used passwords.
+3.3 Default vendor passwords must be changed immediately upon system deployment.
+
+4. Data Classification and Handling
+4.1 Data is classified into four tiers: Public, Internal, Confidential, and Restricted.
+4.2 Restricted data must be encrypted at rest using AES-256 and in transit using TLS 1.2 or higher.
+4.3 Confidential and Restricted data must not be stored on personal devices or unapproved cloud storage services.
+
+5. Incident Response
+5.1 Any suspected security incident must be reported to the Security Operations Center (SOC) within 1 hour of discovery.
+5.2 The SOC will classify incidents by severity and initiate the incident response playbook within 30 minutes of a Critical classification.
+5.3 A post-incident review report must be completed within 5 business days of incident closure.
+
+6. Remote Work Security
+6.1 Employees working remotely must connect to corporate resources exclusively via the approved VPN client.
+6.2 Company-issued devices must have endpoint detection and response (EDR) software installed and kept up to date.
+
+7. Security Awareness Training
+7.1 All employees must complete mandatory security awareness training within 30 days of hire and annually thereafter.
+
+8. Contact
+For security concerns, contact the IT Security Team at it-security@company.com.
