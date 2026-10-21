@@ -1,4 +1,4 @@
-import re
+﻿import re
 import numpy as np
 from typing import List
 from src.embeddings.embedder import Embedder
@@ -16,6 +16,7 @@ def split_sentences(text: str) -> List[str]:
 def extract_numbers(text: str) -> set:
     return set(re.findall(r"\d+(?:\.\d+)?", text))
 
+
 def strip_boilerplate(text: str) -> str:
     lines = text.split("\n")
     cleaned_lines = []
@@ -26,7 +27,11 @@ def strip_boilerplate(text: str) -> str:
         if re.match(r"^\[\d+\]\s*\(Document:.*?\)$", stripped):
             continue
         cleaned_lines.append(line)
-    return "\n".join(cleaned_lines).strip()
+    cleaned = "\n".join(cleaned_lines).strip()
+    # Remove inline citation markers like [1] or [1][2], which are source
+    # labels, not facts, and should not be treated as numbers in the answer.
+    cleaned = re.sub(r"\[\d+\]", "", cleaned)
+    return cleaned
 
 
 def numeric_consistency(answer: str, retrieved_texts: List[str]) -> float:
@@ -98,7 +103,6 @@ def answer_relevancy(question: str, answer: str) -> float:
 
 
 def citation_validity(answer: str, num_citations_available: int) -> float:
-    """Checks that every [n] marker in the answer points to a citation that actually exists."""
     used_markers = set(int(n) for n in re.findall(r"\[(\d+)\]", answer))
     if not used_markers:
         return 0.0

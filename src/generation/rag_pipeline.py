@@ -42,7 +42,27 @@ class OpenAILLM:
         return response.choices[0].message.content
 
 
+class GroqLLM:
+    def __init__(self):
+        from openai import OpenAI
+        self.client = OpenAI(
+            api_key=settings.groq_api_key,
+            base_url="https://api.groq.com/openai/v1",
+        )
+
+    def generate(self, messages: list) -> str:
+        response = self.client.chat.completions.create(
+            model=settings.groq_model,
+            messages=messages,
+            temperature=0.1,
+            max_tokens=600,
+        )
+        return response.choices[0].message.content
+
+
 def get_llm():
+    if settings.groq_api_key:
+        return GroqLLM()
     if settings.openai_api_key:
         return OpenAILLM()
     return ExtractiveFallbackLLM()
