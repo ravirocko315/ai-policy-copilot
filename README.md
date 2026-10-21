@@ -1,6 +1,6 @@
 ﻿# AI Policy Copilot
 
-An educational Python RAG prototype that answers questions from policy documents using semantic search, keyword search, reranking, and citations. The repository includes sample policy documents across three domains: HR (leave policy), Insurance (claims policy), and Enterprise Security (information security policy).
+An educational Python RAG prototype that answers questions from policy documents using semantic search, keyword search, reranking, and citations. The repository includes sample policy documents across three domains: HR (leave policy), Insurance (claims policy), and Enterprise Security (information security policy). An interactive Streamlit web UI is included for trying it out directly in the browser (see Running the UI below).
 
 Ask a question such as *"How many sick days do I get?"* The system retrieves relevant policy passages and attaches source citations. When an LLM is configured, it can draft an answer such as: `Employees are entitled to 12 days of paid sick leave per year. [1]` In offline mode, it shows the retrieved excerpts instead.
 
@@ -61,7 +61,7 @@ Embeddings are great at matching meaning ("time off" ~ "leave") but can miss exa
 
 ### Why rerank after retrieval?
 
-Initial retrieval (dense + sparse) is optimized for speed across large document sets, so it can return a noisy list of "roughly relevant" passages. The reranker is slower but far more accurate - it reads the question and each candidate passage together, rather than comparing pre-computed vectors. It's used only on the small shortlist, not the whole document set, to keep this fast. It also filters out passages that score below a relevance threshold, rather than always returning a fixed number of results (see Challenge #4 below).
+Initial retrieval (dense + sparse) is optimized for speed across large document sets, so it can return a noisy list of "roughly relevant" passages. The reranker is slower but far more accurate - it reads the question and each candidate passage together, rather than comparing pre-computed vectors. This is used only on the small shortlist, not the whole document set, to keep things fast. It also filters out passages that score below a relevance threshold, rather than always returning a fixed number of results (see Challenge #4 below).
 
 ## Project Structure
 
@@ -81,6 +81,9 @@ ai-policy-copilot/
 │   ├── citations/               # Builds numbered source citations
 │   ├── generation/              # Prompt construction + LLM (or offline fallback)
 │   └── evaluation/              # RAG quality metrics
+├── ui/
+│   ├── app.py                  # Streamlit web interface
+│   └── presentation.py         # Helpers for cleaning answer text for display
 └── tests/                      # Isolated test scripts for each component
 ~~~
 
@@ -115,6 +118,23 @@ $env:OPENAI_API_KEY="your-key-here"
 ~~~
 
 Without this step, the system still works fully - it will display the top retrieved policy excerpts directly rather than an LLM-written paragraph.
+
+## Running the UI
+
+A Streamlit web interface is included for interactively asking questions without using the command line.
+
+~~~bash
+streamlit run ui\app.py
+~~~
+
+This opens a browser window at http://localhost:8501 with:
+
+- A sidebar with a project description and example questions you can click to try instantly
+- A text box to type your own question
+- An Answer section showing the retrieved or generated answer
+- A Sources section listing each cited policy passage as an expandable box, showing the document, section, and reranker relevance score
+
+The first load takes 10-30 seconds while the embedding and reranker models load and the document index is built. This is cached afterward, so follow-up questions are fast.
 
 ## Running the Evaluation
 
@@ -181,9 +201,8 @@ After the above fix reduced each answer to a single cited excerpt, faithfulness 
 
 ## Status / Roadmap
 
-This is a working prototype covering all six core RAG concepts end-to-end (chunking, embeddings, hybrid search, reranking, citations, evaluation), with sample documents across HR, Insurance, and Enterprise Security domains and an 8-question evaluation set spanning all three. Planned next steps:
+This is a working prototype covering all six core RAG concepts end-to-end (chunking, embeddings, hybrid search, reranking, citations, evaluation), with sample documents across HR, Insurance, and Enterprise Security domains, an 8-question evaluation set spanning all three, and an interactive Streamlit UI. Planned next steps:
 
-- Build a Streamlit UI for interactive question-answering
 - Expand the evaluation set further
 - Optional: FastAPI endpoint for programmatic access
 - Optional: connect a real LLM via OpenAI API key for generated (not just extractive) answers
