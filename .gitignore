@@ -1,0 +1,27 @@
+# Virtual environment
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables / secrets
+.env
+
+# FAISS index / generated data (regenerable, shouldn't be versioned)
+storage/
+*.index
+*.pkl
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Evaluation output reports (regenerable)
+data/eval/eval_report.csv

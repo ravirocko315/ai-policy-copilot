@@ -1,0 +1,18 @@
+[
+  {
+    "question": "How many days of paid annual leave am I entitled to per year?",
+    "ground_truth": "Employees are entitled to 21 working days of paid annual leave per year, accrued at 1.75 days per month."
+  },
+  {
+    "question": "How many sick days do I get?",
+    "ground_truth": "Employees are entitled to 12 days of paid sick leave per year."
+  },
+  {
+    "question": "How long is parental leave for a primary caregiver?",
+    "ground_truth": "Primary caregivers are entitled to 16 weeks of paid parental leave."
+  },
+  {
+    "question": "How do I contact HR about this policy?",
+    "ground_truth": "Contact the HR Help Desk at hr-helpdesk@company.com."
+  }
+]
